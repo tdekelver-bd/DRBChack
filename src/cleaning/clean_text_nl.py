@@ -5,7 +5,7 @@ from cleaning.abstract_cleaning import AbstractCleaning
 
 class CleanTextNL(AbstractCleaning):
     def __init__(self):
-        self.nlp = 
+        self.nlp = spacy.load("nl_core_news_sm")
     
     def process(self, text):
         """Takes an input text in Duthc and cleans it up.
@@ -18,11 +18,12 @@ class CleanTextNL(AbstractCleaning):
         Return:
             String -- Text clean
         """
-        nlp = spacy.load("nl_core_news_sm")
-
-        lems = [tok.lemma_ for tok in nlp(text) if tok.pos_ not in ["PUNCT", "SPACE", "NUM"]]
-        lems = [lem for lem in doc if lem not in STOP_WORDS]
-
-        return " ".join(lems)
+        
+        text_clean = []
+        for sent in text:
+            lems = [tok.lemma_ for tok in self.nlp(sent) if tok.pos_ not in ["PUNCT", "SPACE", "NUM"]]
+            lems = [lem for lem in lems if lem not in STOP_WORDS]
+            text_clean.append(" ".join(lems))
+        return text_clean
         
         

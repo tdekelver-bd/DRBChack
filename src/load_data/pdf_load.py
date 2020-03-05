@@ -17,8 +17,9 @@ class PdfLoadData(AbstractLoadData):
         with open(path_pdf ,"rb") as pdfFile:
             pdf = PyPDF2.PdfFileReader(pdfFile)
             text = "/n ".join([pdf.getPage(i).extractText() for i in range(pdf.numPages)])
-        
-        text = " ".join(text.split(split_str)[1:])
+            
+        if split_str is not None:
+            text = " ".join(text.split(split_str)[1:])
         paragraphes = [paragraphe.replace("\n"," ").replace("/n"," ") for paragraphe in text.split(".\n ")]
         
         return paragraphes
