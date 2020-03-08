@@ -1,4 +1,5 @@
 from sklearn import svm
+import numpy as np
 
 from model.abstract_model import AbstractModel
 
@@ -26,8 +27,13 @@ class SVMModel(AbstractModel):
                 "TAG2" : [], ...
                 }} -- Data used for training
         """
+        print(len(data["feature"]))
+        data["feature"] = [d[0] for d in data["feature"]]
+        print(len(data["feature"]))
+        print(data["feature"][0].shape)
         for tag in self.list_tag:
-            self.model_by_tag[tag].fit[data["feature"], data[tag]]
+            print(data[tag])
+            self.model_by_tag[tag].fit(data["feature"], data[tag])
     
     
     def predict(self, texts):
@@ -45,7 +51,7 @@ class SVMModel(AbstractModel):
         """
         result = {}
         for tag in self.list_tag:
-            result[tag] = self.model_by_tag[tag].predict()
+            result[tag] = self.model_by_tag[tag].predict(texts)
             
         return result
     

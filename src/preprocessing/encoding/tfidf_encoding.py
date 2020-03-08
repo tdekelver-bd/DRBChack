@@ -1,6 +1,7 @@
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from encoding.abstract_encoding import AbstractEncoding
+from preprocessing.encoding.abstract_encoding import AbstractEncoding
 
 class TFIDFEncoding(AbstractEncoding):
     def __init__(self, data):
@@ -21,7 +22,7 @@ class TFIDFEncoding(AbstractEncoding):
         Return:
             [Vector] -- Vectorized data
         """
-        return self.vectorizer.transform(data)
+        return [d.toarray() for d in self.vectorizer.transform(data)]
         
     def get_feature_names(self):
         """Returns the list of words used by the tfidf

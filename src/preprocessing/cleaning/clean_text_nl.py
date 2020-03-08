@@ -1,7 +1,7 @@
 import spacy
 from spacy.lang.nl import STOP_WORDS
 
-from cleaning.abstract_cleaning import AbstractCleaning
+from preprocessing.cleaning.abstract_cleaning import AbstractCleaning
 
 class CleanTextNL(AbstractCleaning):
     def __init__(self):
