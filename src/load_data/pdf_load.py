@@ -19,7 +19,9 @@ class PdfLoadData(AbstractLoadData):
             text = "/n ".join([pdf.getPage(i).extractText() for i in range(pdf.numPages)])
             
         if split_str is not None:
+            text = text.replace("\n","")
             text = " ".join(text.split(split_str)[1:])
-        paragraphes = [paragraphe.replace("\n"," ").replace("/n"," ") for paragraphe in text.split(".\n ")]
+        paragraphes = [paragraphe.replace("/n"," ") for paragraphe in text.split("./n ")]
         
         return paragraphes
+    
