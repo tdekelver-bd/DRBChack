@@ -7,11 +7,10 @@ from preprocessing.encoding.tfidf_encoding import TFIDFEncoding
 class Preprocessing():
     def __init__(self, texts, list_tag):
         self.clean_text = CleanTextNL()
-        all_text = []
-        for text in texts:
-            all_text += self.clean_text.process(text)
 
-        self.encoder = TFIDFEncoding(all_text)
+        texts = self.clean_text.process(texts)
+
+        self.encoder = TFIDFEncoding(texts)
         self.list_tag = list_tag
         
     
@@ -29,25 +28,18 @@ class Preprocessing():
                 "TAG2" : ...
             }
         """
-        texts = [self.clean_text.process(text) for text in texts]
-        encoded_texts = [self.encoder.process(text) for text in texts]
+        texts = self.clean_text.process(texts) 
+        encoded_texts = self.encoder.process(texts) 
         encoded_tags = [self.encode_tag(tags) for tags in tags_by_text]
 
-        #we are going to treat each paragraph of the text as an independent text 
-        #   for that we are going to associate the tags of the text to it.
-        encoded_texts_extend = []
-        encoded_tags_extend = []
-        for encoded_text, encoded_tag in zip(encoded_texts, encoded_tags):
-            encoded_texts_extend += encoded_text
-            encoded_tags_extend += [encoded_tag for t in encoded_text]
-        
-        transp_encoded_tags = np.transpose(encoded_tags_extend)
+        transp_encoded_tags = np.transpose(encoded_tags)
         
         result = {
-            "feature": encoded_texts_extend
+            "feature": encoded_texts
         }
-        
+
         for idx, tag in enumerate(self.list_tag):
+            print(idx, tag)
             result[tag] = transp_encoded_tags[idx]
 
         return result

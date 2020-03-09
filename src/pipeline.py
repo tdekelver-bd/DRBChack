@@ -5,16 +5,17 @@ from model.svm_model import SVMModel
 
 load_data = PdfLoadData()
 
-text = load_data.process("./data/input_pdf/RVVB.A.0010.0025.pdf")
-text2 = load_data.process("./data/input_pdf/RVVB.A.1819.1356.pdf")
-
+print("process")
+textes = load_data.process_dir("./data/input_pdf/")
+print("End Process")
 list_tags = ["TAG1", "TAG2", "TAG3"]
-preprocessing = Preprocessing([text, text2], list_tags)
-
-data_process =  preprocessing.process([text, text2], [["TAG1", "TAG2"],["TAG3"]])
+preprocessing = Preprocessing(textes, list_tags)
+data_process =  preprocessing.process(textes, [["TAG1", "TAG2"],["TAG3"]])
+print("End Preprocessing")
 
 model = SVMModel(list_tags)
 
 model.train(data_process)
 
+print(model.predict(data_process["feature"]))
 
