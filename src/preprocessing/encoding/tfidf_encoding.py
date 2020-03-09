@@ -5,7 +5,7 @@ from preprocessing.encoding.abstract_encoding import AbstractEncoding
 
 class TFIDFEncoding(AbstractEncoding):
     def __init__(self, data):
-        """Inialisation of the TFIDF.
+        """Initialisation of the TFIDF.
         
         Arguments:
             data {[String]} -- Data used for conf the TFIDF.

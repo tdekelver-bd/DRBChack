@@ -8,7 +8,7 @@ class CleanTextNL(AbstractCleaning):
         self.nlp = spacy.load("nl_core_news_sm")
     
     def process(self, text):
-        """Takes an input text in Duthc and cleans it up.
+        """Takes an input text in Dutch and cleans it up.
         We're going to remove punctuation, spaces and numbers.
         Then we will convert our words to lems and remove all STOP_WORDS
         
