@@ -6,7 +6,7 @@ from model.svm_model import SVMModel
 load_data = PdfLoadData()
 
 print("process")
-textes = load_data.process_dir("./data/input_pdf/")
+names_files, textes = load_data.process_dir("./data/input_pdf/")
 print("End Process")
 list_tags = ["TAG1", "TAG2", "TAG3"]
 preprocessing = Preprocessing(textes, list_tags)

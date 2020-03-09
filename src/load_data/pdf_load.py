@@ -34,6 +34,6 @@ class PdfLoadData(AbstractLoadData):
             print(name_file)
             textes.append(self.process(path_dir+name_file, split_str))
             
-        return textes
+        return list_pdf, textes
             
     
