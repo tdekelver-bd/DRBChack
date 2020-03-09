@@ -37,12 +37,20 @@ class PdfLoadData(AbstractLoadData):
         return " ".join(paragraphes)
     
     def process_dir(self, path_dir, split_str="Beoordeling door de Raad"):
+        """[summary]
+        
+        Arguments:
+            path_dir {[String]} -- Dir to load
+        
+        
+        Returns:
+            [tags], [texte] -- Tags by text and text 
+        """
         list_pdf = [name_file  for name_file in os.listdir(path_dir) if ".pdf" in name_file]
         
         textes = []
         tags = []
         for name_file in list_pdf:
-            print(name_file)
             textes.append(self.process(path_dir+name_file, split_str))
             tags.append(list(self.df_tag_file[self.df_tag_file["A_names"]==name_file]["tags"]))
         return tags, textes
