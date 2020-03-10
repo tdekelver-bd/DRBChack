@@ -6,7 +6,7 @@ from model.svm_model import SVMModel
 load_data = PdfLoadData("./data/arrests_trefwoorden.csv", "./data/arrest_names_new.csv")
 
 print("process")
-tags, textes = load_data.process_dir("./data/input_pdf/")
+tags, textes = load_data.process_dir("./data/input_pdf2/")
 print("End Process")
 """
 text = load_data.process("./data/input_pdf/RVVB.A.0010.0025.pdf")
