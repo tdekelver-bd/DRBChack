@@ -14,6 +14,10 @@ write.csv(tags, "C:/Users/rbelhocine/Desktop/BD/Hackathon/DBRC/src/data/arrests_
 hierarchy <- read.csv("C:/Users/rbelhocine/Desktop/BD/Hackathon/DBRC/src/data/Woordenlijst digitalisering - woordenlijst.csv")
 
 hierarchy <- hierarchy%>%
+  mutate(Hoofd_tag= gsub("\\(navigator\\)|\\[navigator|navigator\\]|navigator", "", Hoofd_tag),
+         Sub_tag=gsub("\\(navigator\\)|\\[navigator|navigator\\]|navigator", "", Sub_tag))%>%
+  mutate(Hoofd_tag=gsub("[[:punct:]]", "", Hoofd_tag),
+         Sub_tag=gsub("[[:punct:]]", "", Sub_tag))%>%
   mutate(Hoofd_tag=trimws(tolower(Hoofd_tag)), Sub_tag=trimws(tolower(Sub_tag)))
 
 tags_new <- tags%>%
@@ -24,13 +28,24 @@ tags_new <- tags%>%
   mutate(new_tags= gsub("\\(navigator\\)|\\[navigator|navigator\\]|navigator", "", new_tags))%>%
   filter(grepl("[A-Za-z]", new_tags))%>%
   mutate(new_tags=gsub("[[:punct:]]", "", new_tags))%>%
-  mutate(new_tags=case_when(grepl("goede ro", new_tags)~"gro",
+  mutate(new_tags=case_when(grepl("goede ro | beoordeling gro", new_tags)~"gro",
                             grepl("exceptie verworpen", new_tags)~"Exceptie onontvankelijk", 
                             grepl("schorsing verworpen", new_tags) ~ "Vernietiging verworpen",
+                            new_tags=="exceptie"~"excepties",
                             TRUE~new_tags))%>%
   mutate(new_tags=trimws(new_tags))%>%
   mutate(new_tags=tolower(new_tags))%>%
   filter(new_tags%in%hierarchy$Sub_tag | new_tags%in%hierarchy$Hoofd_tag)
+
+
+tags_new_add <- tags_new%>%
+  inner_join(hierarchy, by=c("new_tags"="Sub_tag"))%>%
+  select(Nr_Arrest, Hoofd_tag)%>%
+  rename(new_tags=Hoofd_tag)
+  
+tags_new <- tags_new%>%
+  rbind(tags_new_add)%>%
+  unique()
 
 tags_old <- tags%>%
   unique()%>%
@@ -39,10 +54,12 @@ tags_old <- tags%>%
   mutate(new_tags= gsub("\\(navigator\\)|\\[navigator|navigator\\]|navigator", "", new_tags))%>%
   filter(grepl("[A-Za-z]", new_tags))%>%
   mutate(new_tags=gsub("[[:punct:]]", "", new_tags))%>%
-  mutate(new_tags=case_when(grepl("goede ro", new_tags)~"gro",
+  mutate(new_tags=case_when(grepl("goede ro|beoordeling gro", new_tags)~"gro",
                             grepl("exceptie verworpen", new_tags)~"Exceptie onontvankelijk", 
                             grepl("schorsing verworpen", new_tags) ~ "Vernietiging verworpen",
+                            new_tags=="exceptie"~"excepties",
                             TRUE~new_tags))%>%
+  filter(str_count(new_tags, '\\s+')<5)%>%
   mutate(new_tags=trimws(new_tags))%>%
   mutate(new_tags=tolower(new_tags))%>%
   filter(!(new_tags%in%hierarchy$Sub_tag | new_tags%in%hierarchy$Hoofd_tag))
