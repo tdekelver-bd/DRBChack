@@ -36,7 +36,7 @@ class PdfLoadData(AbstractLoadData):
 
         return " ".join(paragraphes)
 
-    def process_dir(self, path_dir, split_str="Beoordeling door de Raad"):
+    def process_dir(self, path_dir, split_str="Beoordeling door de Raad", load_pdfs=True):
         """[summary]
 
         Arguments:
@@ -54,7 +54,8 @@ class PdfLoadData(AbstractLoadData):
         for i, name_file in enumerate(list_pdf):
             if i % 50 == 0:
                 print(i, total_docs)
-            textes.append(self.process(path_dir + name_file, split_str))
+            if load_pdfs:
+                textes.append(self.process(path_dir + name_file, split_str))
             tags.append(list(self.df_tag_file[self.df_tag_file["A_names"] == name_file]["tags"]))
         return tags, textes, list_pdf
 
