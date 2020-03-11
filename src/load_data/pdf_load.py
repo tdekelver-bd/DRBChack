@@ -10,66 +10,71 @@ class PdfLoadData(AbstractLoadData):
     def __init__(self, path_file_tag, path_file_name):
         df_tag = load_csv_unicode(path_file_tag)
         df_name_file = pd.read_csv(path_file_name)
-        
+
         print(df_name_file.head())
         print(df_tag.head())
 
         self.df_tag_file = pd.merge(df_name_file, df_tag, left_on='EVR_nr', right_on='nr_arrests')
-        
+
     def process(self, path_pdf, split_str="Beoordeling door de Raad"):
         """Extract the text from the pdf file at the path_data location.
-        
+
         Arguments:
             path_pdf {String} -- Path of the pdf file to process
-        
+
         Returns:
             {String} -- Text extract
         """
-        with open(path_pdf ,"rb") as pdfFile:
+        with open(path_pdf, "rb") as pdfFile:
             pdf = PyPDF2.PdfFileReader(pdfFile)
             text = "/n ".join([pdf.getPage(i).extractText() for i in range(pdf.numPages)])
-            
+
         if split_str is not None:
-            text = text.replace("\n","")
+            text = text.replace("\n", "")
             text = " ".join(text.split(split_str)[1:])
-        paragraphes = [paragraphe.replace("/n"," ") for paragraphe in text.split("./n ")]
-        
+        paragraphes = [paragraphe.replace("/n", " ") for paragraphe in text.split("./n ")]
+
         return " ".join(paragraphes)
-    
+
     def process_dir(self, path_dir, split_str="Beoordeling door de Raad"):
         """[summary]
-        
+
         Arguments:
             path_dir {[String]} -- Dir to load
-        
-        
+
+
         Returns:
-            [tags], [texte] -- Tags by text and text 
+            [tags], [texte] -- Tags by text and text
         """
-        list_pdf = [name_file  for name_file in os.listdir(path_dir) if ".pdf" in name_file]
-        
+        list_pdf = [name_file for name_file in os.listdir(path_dir) if ".pdf" in name_file]
+
         textes = []
         tags = []
-        for name_file in list_pdf:
-            print(name_file)
-            textes.append(self.process(path_dir+name_file, split_str))
-            tags.append(list(self.df_tag_file[self.df_tag_file["A_names"]==name_file]["tags"]))
-        return tags, textes
-            
-    
+        total_docs = len(list_pdf)
+        for i, name_file in enumerate(list_pdf):
+            if i % 50 == 0:
+                print(i, total_docs)
+            textes.append(self.process(path_dir + name_file, split_str))
+            tags.append(list(self.df_tag_file[self.df_tag_file["A_names"] == name_file]["tags"]))
+        return tags, textes, list_pdf
+
+
 def load_csv_unicode(path_csv):
     with open(path_csv, "r") as f:
         nr_arrests = []
         names = []
         tags = []
-        lines = csv.reader(f, delimiter = ',', quotechar = '|')
+        idx = 0
+        lines = csv.reader(f, delimiter=',', quotechar='|', )
         for line in lines:
-            nr_arrests.append(line[0])
-            names.append(line[1])
-            tags.append(line[2])
+            if idx == 0:
+                idx += 1
+                pass
+            nr_arrests.append(line[1])
+            tags.append(line[0])
+            idx += 1
         df_at = pd.DataFrame()
-        df_at["nr_arrests"] = [val.replace('"','') for val in nr_arrests[1:]]
-        df_at["names"] =  [val.replace('"','') for val in names[1:]]
-        df_at["tags"] =  [val.replace('"','') for val in tags[1:]]
-        df_at["year"] =  df_at["nr_arrests"].apply(lambda val : val.split("/")[0]) 
+        df_at["nr_arrests"] = [val.replace('"', '') for val in nr_arrests[1:]]
+        df_at["tags"] = [val.replace('"', '') for val in tags[1:]]
+        df_at["year"] = df_at["nr_arrests"].apply(lambda val: val.split("/")[0])
     return df_at

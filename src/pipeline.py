@@ -2,8 +2,10 @@
 from load_data.pdf_load import PdfLoadData
 from preprocessing.preprocessing import Preprocessing
 from model.svm_model import SVMModel
+import os
+os.chdir('./src')
 
-load_data = PdfLoadData("./data/arrests_trefwoorden.csv", "./data/arrest_names_new.csv")
+load_data = PdfLoadData("./data/arrests_trefwoorden_new.csv", "./data/arrest_names_new.csv")
 
 print("process")
 tags, textes = load_data.process_dir("./data/input_pdf2/")
