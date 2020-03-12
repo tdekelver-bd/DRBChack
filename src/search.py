@@ -18,8 +18,8 @@ def DBRCSearchEngine(query):
     response  = requests.get(url, headers=headers)
     index_list = response.json()
     
-    output = []
+    docs = {}
     for doc in index_list['value']:
-        output.append(doc['metadata_storage_name'])
-    return output
+        docs[doc['metadata_storage_name']] = doc['content']
+    return docs
 
