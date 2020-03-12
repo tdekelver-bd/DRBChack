@@ -8,6 +8,7 @@ Created on Wed Mar 11 11:58:20 2020
 import json
 import requests
 from pprint import pprint
+from collections import OrderedDict
 
 def DBRCSearchEngine(query):
     endpoint = 'https://dbrc-search.search.windows.net/'
@@ -18,7 +19,7 @@ def DBRCSearchEngine(query):
     response  = requests.get(url, headers=headers)
     index_list = response.json()
     
-    docs = {}
+    docs = OrderedDict()
     for doc in index_list['value']:
         docs[doc['metadata_storage_name']] = doc['content']
     return docs
